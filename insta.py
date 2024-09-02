@@ -4,14 +4,18 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import configparser,os
 app = Flask(__name__)
+conf=configparser.ConfigParser()
+conf.read('config.ini')
+
+DAYLIMIT=conf['settings']['limit_per_day']
+HOURLIMIT=conf['settings']['limit_per_hour']
 limiter = Limiter(
     get_remote_address,
     app=app,
-    default_limits=["200 per day", "60 per hour"],
+    default_limits=[f"{DAYLIMIT} per day", f"{HOURLIMIT} per hour"],
     storage_uri="memory://",
 )
-conf=configparser.ConfigParser()
-conf.read('config.ini')
+
 
 L = instaloader.Instaloader(filename_pattern='{target}/{shortcode}_{profile}_{date:%Y-%m-%d}')
 username = conf['settings']['instagram_user']
